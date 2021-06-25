@@ -14,20 +14,17 @@ const gallery = document.querySelector('.gallery');
 
 
 
-
 //////////////////////////////////////
 // Fetch data from randomUser API to display.
-
 const randomUser = async function () {
   const responce = await fetch('https://randomuser.me/api/?results=12');
   const data = await responce.json();
   const users = data.results;
 
-  // Pass data to show on modal.
-  modalUser(users);
-
+  // Load data
   for (let i = 0; i < users.length; i++) {
-    let html = `<div class="card" id="card">
+    // Setting unique id's, to show data on modal later.
+    let html = `<div class="card" id="card${i}">
     <div class="card-img-container">
     <img class="card-img" src="${users[i].picture.large}" alt="profile picture">
     </div>
@@ -39,7 +36,14 @@ const randomUser = async function () {
       </div>`;
     gallery.insertAdjacentHTML('beforeend', html);
   }
+
+  // Pass data to show on modal.
+  modalUser(users);
+
+  // Pass data to Search on modal.
+  SearchUser(users);
 }
+
 randomUser();
 
 
@@ -47,80 +51,73 @@ randomUser();
 // Implement Modal functionality.
 
 function modalUser(users) {
-
+  // Event listner on cards.
   document.addEventListener('click', function (e) {
-    if (e.target && e.target.id === 'card' || e.target && e.target.id === 'name') {
+    for (let i = 0; i < users.length; i++) {
+      let id = "card" + i;
 
-      // modal.classList.remove('hidden');
-      const html = `
- <div class="modal-container">
-          <div class="modal">
-              <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
-              <div class="modal-info-container">
-                  <img class="modal-img" src="" alt="profile picture">
-                  <h3 id="name" class="modal-name cap">name</h3>
-                  <p class="modal-text">email</p>
-                  <p class="modal-text cap">city</p>
-                  <hr>
-                  <p class="modal-text">(555) 555-5555</p>
-                  <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-                  <p class="modal-text">Birthday: 10/21/2015</p>
-              </div>
-          </div>
-      </div> `;
+      if (e.target && e.target.id === id) {
+        const html = `
+    <div class="modal-container">
+            <div class="modal">
+                <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
+                <div class="modal-info-container">
+                    <img class="modal-img" src="${users[i].picture.large}" alt="profile picture">
+                    <h3 id="name" class="modal-name cap">${users[i].name.first + ' ' + users[i].name.last}</h3>
+                    <p class="modal-text">${users[i].email}</p>
+                    <p class="modal-text cap">${users[i].location.city}</p>
+                    <hr>
+                    <p class="modal-text">${users[i].cell}</p>
+                    <p class="modal-text">${users[i].location.state}</p>
+                    <p class="modal-text">Birthday: ${users[i].dob.date.slice(0, 10)}</p>
+                </div>
+            </div>
+        </div> `;
 
-      document.body.insertAdjacentHTML('beforeend', html);
-      e.target.disabled = true;
+        document.body.insertAdjacentHTML('beforeend', html);
 
 
-      // Close Modal
-      // let modal = document.querySelector('.modal');
-      // let modalContainer = document.querySelector('.modal-container');
-      // const closeBtn = document.querySelector('.modal-close-btn');
-
-      // //Event listener for closing modal
-      // closeBtno.addEventListener('click', () => {
-      //   modalContainer.style = 'display: none';
-      //   modal.remove();
-      // });
-
+        // Close Modal
+        let closebtn = document.querySelector(".modal-close-btn");
+        let modalContainer = document.querySelector('.modal-container');
+        closebtn.addEventListener('click', function () {
+          modalContainer.remove();
+        })
+      }
     }
-  });
+  })
 }
 
 
 //////////////////////////////////////
 // Implement Search functionalitys
+// function SearchUser(users) {
+
+//   // Insert the form.
+//   const html = `
+// <form action="#" method="get">
+// <input type="search" id="search-input" class="search-input" placeholder="Search...">
+// <input type="submit" value="&#x1F50D;" id="serach-submit" class="search-submit">
+// </form> `;
 
 
-//Adds a search bar
-// var searchBar = function searchBar() {
-//   var divToAddFormTo = document.getElementById('formplace');
-//   var searchHTML = '<form action="#" method="get" preventDefault>\n          <input type="search" id="search-input" class="search-input" placeholder="Search...">\n          <input type="submit" value="&#x1F50D;" id="serach-submit" class="search-submit">\n      </form> ';
-//   divToAddFormTo.innerHTML = searchHTML;
+//   let searchContainer = document.querySelector('.search-container');
+//   searchContainer.insertAdjacentHTML('beforeend', html);
 
-//   //Adds search functionality
-//   var searchBar = divToAddFormTo.firstElementChild.firstElementChild;
-//   searchBar.addEventListener('keyup', function (e) {
-//     var cards = document.getElementsByClassName('card');
-//     for (var i = 0; i < 12; i++) {
-//       cards[i].style.display = 'none';
-//     };
-//     for (var _i = 0; _i < 12; _i++) {
-//       console.log(searchBar.value);
-//       if (usersOnPage[_i].includes(searchBar.value)) {
-//         console.log(usersOnPage[_i]);
-//         var userToShow = document.getElementById(usersOnPage[_i] + " card");
-//         userToShow.style.display = defaultDisplay;
+
+//   const searchBar = document.querySelector(".search-input");
+//   searchBar.addEventListener("keyup", e => {
+//     const searchString = e.target.value;
+
+
+//     for (let i = 0; i < users.length; i++) {
+//       if (users[i].email === searchString) {
+
+//         alert('this is matching');
 //       }
-//     };
-//     if (searchBar.value.length == 0) {
-//       for (var _i2 = 0; _i2 < 12; _i2++) {
-//         cards[_i2].style.display = defaultDisplay;
-//       };
 //     }
+
+
 //   });
-// }; //end of searchBar
 
-
-// searchBar();
+// }
