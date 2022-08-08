@@ -21,6 +21,7 @@ const randomUser = async function () {
   const data = await responce.json();
   const users = data.results;
 
+  console.log(users);
   // Load data
   for (let i = 0; i < users.length; i++) {
     // Setting unique id's, to show data on modal later.
